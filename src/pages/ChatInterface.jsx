@@ -49,83 +49,86 @@ const ChatInterface = () => {
   const activeConv = conversations.find(c => c.id === activeChatId);
 
   return (
-    <div className="flex flex-col h-full max-w-4xl mx-auto w-full">
-      {/* Chat Area */}
-      <div className={`flex-1 overflow-y-auto px-4 py-6 md:p-8 space-y-6 scroll-smooth ${settings.density === 'compact' ? 'space-y-4' : 'space-y-8'}`}>
-        
-        {/* Empty State / Welcome */}
-        {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50">
-             <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center">
-                <Sparkles size={32} className="text-slate-400" />
-             </div>
-             <h2 className="text-2xl font-semibold">How can I help you today?</h2>
-          </div>
-        )}
+    <div className="flex flex-col h-full w-full relative">
+      {/* Chat Area - Scroll Container Full Width */}
+      <div className="flex-1 w-full overflow-y-auto scroll-smooth">
+        {/* Inner Content Centered */}
+        <div className={`max-w-4xl mx-auto px-4 py-6 md:p-8 space-y-6 ${settings.density === 'compact' ? 'space-y-4' : 'space-y-8'}`}>
+          
+          {/* Empty State / Welcome */}
+          {messages.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-50 py-20">
+               <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
+                  <Sparkles size={32} className="text-gray-400" />
+               </div>
+               <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-200">How can I help you today?</h2>
+            </div>
+          )}
 
-        {messages.map((msg) => (
-          <div key={msg.id} className={`group flex gap-4 md:gap-6 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
-             
-             {/* Avatar */}
-             <div className="flex-shrink-0 mt-1">
-               {msg.role === 'assistant' ? (
-                 <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
-                   <Bot size={18} />
-                 </div>
-               ) : (
-                 <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-300">
-                   <User size={18} />
-                 </div>
-               )}
-             </div>
+          {messages.map((msg) => (
+            <div key={msg.id} className={`group flex gap-4 md:gap-6 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}>
+               
+               {/* Avatar */}
+               <div className="flex-shrink-0 mt-1">
+                 {msg.role === 'assistant' ? (
+                   <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                     <Bot size={18} />
+                   </div>
+                 ) : (
+                   <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300">
+                     <User size={18} />
+                   </div>
+                 )}
+               </div>
 
-             {/* Content */}
-             <div className={`flex-1 max-w-[85%] ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
-               <div className="space-y-1">
-                 {/* Name & Time */}
-                 <div className={`flex items-center gap-2 text-xs text-slate-400 mb-1 ${msg.role === 'user' ? 'justify-end' : ''}`}>
-                    <span className="font-semibold text-slate-600 dark:text-slate-300">
-                      {msg.role === 'assistant' ? 'Assistant' : 'You'}
-                    </span>
-                    {settings.showTimestamps && (
-                       <span>{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    )}
-                 </div>
-                 
-                 {/* Bubble */}
-                 <div className={`
-                    inline-block rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed shadow-sm
-                    ${msg.role === 'user' 
-                      ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-tr-sm' 
-                      : 'bg-transparent text-gray-800 dark:text-gray-100'
-                    }
-                 `}>
-                    {msg.text}
+               {/* Content */}
+               <div className={`flex-1 max-w-[85%] ${msg.role === 'user' ? 'text-right' : 'text-left'}`}>
+                 <div className="space-y-1">
+                   {/* Name & Time */}
+                   <div className={`flex items-center gap-2 text-xs text-gray-400 mb-1 ${msg.role === 'user' ? 'justify-end' : ''}`}>
+                      <span className="font-semibold text-gray-600 dark:text-gray-300">
+                        {msg.role === 'assistant' ? 'Assistant' : 'You'}
+                      </span>
+                      {settings.showTimestamps && (
+                         <span>{msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                      )}
+                   </div>
+                   
+                   {/* Bubble */}
+                   <div className={`
+                      inline-block rounded-2xl px-5 py-3.5 text-[15px] leading-relaxed shadow-sm
+                      ${msg.role === 'user' 
+                        ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-tr-sm' 
+                        : 'bg-transparent text-gray-800 dark:text-gray-100'
+                      }
+                   `}>
+                      {msg.text}
+                   </div>
                  </div>
                </div>
+            </div>
+          ))}
+
+          {isTyping && (
+             <div className="flex gap-4 md:gap-6">
+                <div className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 mt-1">
+                   <Bot size={18} />
+                </div>
+                <div className="flex items-center gap-1.5 p-4 rounded-2xl">
+                   <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-0"></div>
+                   <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-150"></div>
+                   <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-300"></div>
+                </div>
              </div>
-          </div>
-        ))}
+          )}
 
-        {isTyping && (
-           <div className="flex gap-4 md:gap-6">
-              <div className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 mt-1">
-                 <Bot size={18} />
-              </div>
-              <div className="flex items-center gap-1.5 p-4 rounded-2xl">
-                 <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-0"></div>
-                 <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-150"></div>
-                 <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce delay-300"></div>
-              </div>
-           </div>
-        )}
-
-        <div ref={messagesEndRef} />
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Input Area */}
-      <div className="p-4 md:p-6 bg-transparent">
-        <div className="relative max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 border-none rounded-3xl shadow-sm transition-all">
+      {/* Input Area - Full Width Wrapper with Centered Content */}
+      <div className="w-full p-4 md:p-6 bg-transparent">
+        <div className="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 border-none rounded-3xl shadow-sm transition-all relative">
            <textarea
              value={input}
              onChange={(e) => setInput(e.target.value)}
@@ -148,7 +151,7 @@ const ChatInterface = () => {
                 className={`p-2 rounded-full transition-all duration-200 ${
                    input.trim() 
                      ? 'bg-black dark:bg-white text-white dark:text-black' 
-                     : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
+                     : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
                 }`}
               >
                 {isTyping ? <StopCircle size={20} /> : <ArrowUp size={20} />}
@@ -156,7 +159,7 @@ const ChatInterface = () => {
            </div>
         </div>
         <div className="text-center mt-3">
-           <p className="text-xs text-slate-400 dark:text-slate-500">
+           <p className="text-xs text-gray-400 dark:text-gray-500">
              FutureHub can make mistakes. Consider checking important information.
            </p>
         </div>
