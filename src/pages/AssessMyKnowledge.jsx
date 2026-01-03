@@ -43,7 +43,7 @@ const AssessMyKnowledge = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-0">
+    <div className="max-w-4xl mx-auto px-4 py-10 md:px-0">
       <h1 className="text-3xl font-semibold mb-2 text-gray-900 dark:text-white">Assess My Knowledge</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Evaluate your current standing to get a personalized roadmap.</p>
 

@@ -5,7 +5,7 @@ const Roadmap = () => {
   const [activeTab, setActiveTab] = useState('academic');
 
   return (
-    <div className="max-w-5xl mx-auto px-4 md:px-0">
+    <div className="max-w-5xl py-10 mx-auto px-4 md:px-0">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-3xl font-bold mb-2 text-gray-900 dark:text-white">My Roadmaps</h1>
