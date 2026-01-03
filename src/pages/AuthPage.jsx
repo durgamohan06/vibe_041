@@ -24,9 +24,8 @@ const AuthPage = () => {
     }
 
     if (!isLogin) {
-        const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.,?_~])(?=.*[0-9a-z]).{8,}$/;
-        if (!passwordRegex.test(password)) {
-            setError('Password must be at least 8 characters long, contain one uppercase letter, and one special character.');
+        if (password.length < 8) {
+            setError('Password must be at least 8 characters long.');
             return;
         }
     }

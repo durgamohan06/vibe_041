@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Plus, 
@@ -21,9 +21,7 @@ import {
   TrendingUp,
   HelpCircle,
   Clock,
-  Bookmark,
-  Layers,
-  Hash
+  Bookmark
 } from 'lucide-react';
 import { useChat } from '../../context/ChatContext';
 import { useAuth } from '../../context/AuthContext';
@@ -39,12 +37,56 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
   const [menuChatId, setMenuChatId] = useState(null);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
+  // Refs for click outside detection
+  const profileMenuRef = useRef(null);
+  const chatMenuRef = useRef(null);
+
   // Group conversations
   const filteredConversations = conversations.filter(c => 
     c.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
   const pinnedChats = filteredConversations.filter(c => c.pinned);
   const recentChats = filteredConversations.filter(c => !c.pinned);
+
+  // Global click listener to close menus
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Close Profile Menu
+      if (isProfileOpen && profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setIsProfileOpen(false);
+      }
+      
+      // Close Chat Item Menu
+      // Note: For chat menu, we need to be careful not to close it when clicking the triggering button
+      // But the trigger button logic sets state. We can just check if click is outside any menu container.
+      // However, since we have multiple chat items, we can't easily ref them all individually at top level without map.
+      // Simplified approach: If we click anywhere that is NOT inside the currently open menu, close it.
+      // We'll rely on stopping propagation on the menu content itself, and detecting document clicks to close.
+    };
+
+    if (isProfileOpen || menuChatId) {
+       document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileOpen, menuChatId]);
+
+  // Special listener just for the chat menu since it's dynamic
+  useEffect(() => {
+     const closeChatMenu = (e) => {
+        if (menuChatId && !e.target.closest('.chat-menu-container') && !e.target.closest('.chat-menu-trigger')) {
+           setMenuChatId(null);
+        }
+     };
+     
+     if (menuChatId) {
+        document.addEventListener('mousedown', closeChatMenu);
+     }
+     return () => document.removeEventListener('mousedown', closeChatMenu);
+  }, [menuChatId]);
+
 
   const handleNewChat = () => {
     addConversation('New Chat');
@@ -94,7 +136,7 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
         <div className="absolute right-2 flex items-center bg-transparent">
             {chat.pinned && <Pin size={12} className="mr-2 text-gray-400" />}
             <button 
-                className="p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-500"
+                className="chat-menu-trigger p-1 rounded hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-500"
                 onClick={(e) => { e.stopPropagation(); setMenuChatId(menuChatId === chat.id ? null : chat.id); }}
             >
                 <MoreHorizontal size={16} />
@@ -104,7 +146,7 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
       
       {/* Dropdown Menu */}
       {menuChatId === chat.id && (
-        <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden text-sm animate-in fade-in zoom-in-95 duration-100">
+        <div className="chat-menu-container absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden text-sm animate-in fade-in zoom-in-95 duration-100">
            <button onClick={(e) => { e.stopPropagation(); togglePin(chat.id); setMenuChatId(null); }} className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 text-left">
              <Pin size={14} /> {chat.pinned ? 'Unpin' : 'Pin'}
            </button>
@@ -123,18 +165,13 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
            </button>
         </div>
       )}
-      
-      {/* Click outside to close menu */}
-      {menuChatId === chat.id && (
-        <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setMenuChatId(null); }} />
-      )}
     </div>
   );
 
   // Common Profile Trigger (used in both modes but styled differently)
   const ProfileTrigger = () => (
      <button 
-       onClick={() => setIsProfileOpen(!isProfileOpen)}
+       onClick={(e) => { e.stopPropagation(); setIsProfileOpen(!isProfileOpen); }}
        className={`w-full flex items-center ${isCollapsed ? 'justify-center p-2' : 'justify-between p-2'} rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors group`}
      >
         <div className="flex items-center gap-3">
@@ -290,13 +327,12 @@ const ChatSidebar = ({ isMobileOpen, setIsMobileOpen, isCollapsed, setIsCollapse
         )}
 
         {/* BOTTOM PROFILE (Common) */}
-        <div className="p-2 border-t border-gray-200 dark:border-white/10 relative">
+        <div className="p-2 border-t border-gray-200 dark:border-white/10 relative" ref={profileMenuRef}>
            <ProfileTrigger />
 
            {/* Profile Dropdown */}
            {isProfileOpen && (
              <>
-               <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />
                <div className={`absolute bottom-full ${isCollapsed ? 'left-2 mb-2 w-64' : 'left-2 right-2 mb-2'} bg-white dark:bg-gray-900 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 overflow-hidden animate-in fade-in zoom-in-95 slide-in-from-bottom-2`}>
                   
                   {/* Dropdown Header */}

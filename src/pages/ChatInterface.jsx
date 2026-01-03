@@ -128,7 +128,7 @@ const ChatInterface = () => {
 
       {/* Input Area - Full Width Wrapper with Centered Content */}
       <div className="w-full p-4 md:p-6 bg-transparent">
-        <div className="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 border-none rounded-3xl shadow-sm transition-all relative">
+        <div className="max-w-3xl mx-auto bg-gray-50 dark:bg-gray-800 border-none rounded-3xl shadow-sm transition-all relative flex items-end p-2 gap-2">
            <textarea
              value={input}
              onChange={(e) => setInput(e.target.value)}
@@ -140,23 +140,21 @@ const ChatInterface = () => {
              }}
              placeholder="Message FutureHub..."
              rows={1}
-             className="w-full px-5 py-4 bg-transparent border-none focus:ring-0 resize-none max-h-48 rounded-3xl text-gray-800 dark:text-gray-200 placeholder-gray-500"
-             style={{ minHeight: '56px' }}
+             className="w-full pl-4 py-3 bg-transparent border-none focus:ring-0 resize-none max-h-48 text-gray-800 dark:text-gray-200 placeholder-gray-500"
+             style={{ minHeight: '48px', maxHeight: '200px' }}
            />
            
-           <div className="absolute right-2 bottom-2">
-              <button 
-                onClick={handleSend}
-                disabled={!input.trim() || isTyping}
-                className={`p-2 rounded-full transition-all duration-200 ${
-                   input.trim() 
-                     ? 'bg-black dark:bg-white text-white dark:text-black' 
-                     : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {isTyping ? <StopCircle size={20} /> : <ArrowUp size={20} />}
-              </button>
-           </div>
+           <button 
+             onClick={handleSend}
+             disabled={!input.trim() || isTyping}
+             className={`p-2 mb-1.5 rounded-full transition-all duration-200 shrink-0 ${
+                input.trim() 
+                  ? 'bg-black dark:bg-white text-white dark:text-black' 
+                  : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'
+             }`}
+           >
+             {isTyping ? <StopCircle size={20} /> : <ArrowUp size={20} />}
+           </button>
         </div>
         <div className="text-center mt-3">
            <p className="text-xs text-gray-400 dark:text-gray-500">
