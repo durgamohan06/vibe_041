@@ -23,15 +23,19 @@ const AuthPage = () => {
       return;
     }
 
+    if (!isLogin) {
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[!@#$&*.,?_~])(?=.*[0-9a-z]).{8,}$/;
+        if (!passwordRegex.test(password)) {
+            setError('Password must be at least 8 characters long, contain one uppercase letter, and one special character.');
+            return;
+        }
+    }
+
     if (isLogin) {
       login(email, password);
     } else {
       signup(name, email, password);
     }
-    
-    // Navigation happens automatically in App.jsx via AuthContext state change, 
-    // but explicit navigation can force checks if needed.
-    // For now, we rely on state update.
   };
 
   return (
@@ -77,7 +81,7 @@ const AuthPage = () => {
                   placeholder="Full Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white"
+                  className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-gray-500 focus:ring-1 focus:ring-gray-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white"
                 />
               </div>
             )}
@@ -88,7 +92,7 @@ const AuthPage = () => {
                 placeholder="Email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white"
+                className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-gray-500 focus:ring-1 focus:ring-gray-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white"
               />
             </div>
 
@@ -98,7 +102,7 @@ const AuthPage = () => {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white pr-10"
+                className="w-full px-4 py-3.5 bg-transparent border border-gray-300 dark:border-gray-700 rounded-lg focus:border-gray-500 focus:ring-1 focus:ring-gray-500 outline-none transition-all placeholder-gray-400 dark:placeholder-gray-600 dark:text-white pr-10"
               />
               <button
                 type="button"
@@ -113,7 +117,7 @@ const AuthPage = () => {
 
             <button
               type="submit"
-              className="w-full py-3.5 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all shadow-sm"
+              className="w-full py-3.5 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 font-semibold rounded-lg transition-all shadow-sm"
             >
               {isLogin ? 'Continue' : 'Create Account'}
             </button>
@@ -131,7 +135,7 @@ const AuthPage = () => {
             </span>
             <button
               onClick={() => { setIsLogin(!isLogin); setError(''); }}
-              className="text-green-600 hover:text-green-700 font-medium hover:underline"
+              className="text-gray-900 dark:text-white font-medium hover:underline"
             >
               {isLogin ? 'Sign up' : 'Log in'}
             </button>
