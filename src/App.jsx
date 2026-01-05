@@ -12,6 +12,9 @@ import NewsTrends from './pages/NewsTrends';
 import ChatInterface from './pages/ChatInterface';
 import AuthPage from './pages/AuthPage';
 import Onboarding from './pages/Onboarding';
+import NewHome from './pages/NewHome';
+import AIMLRoadmap from './pages/Roadmaps/AIMLRoadmap';
+import { InterestProvider } from './context/InterestContext';
 
 const Placeholder = ({ title }) => (
   <div className="flex flex-col items-center justify-center py-20 text-slate-500">
@@ -53,40 +56,44 @@ function App() {
     <ThemeProvider>
       <AuthProvider>
         <ChatProvider>
-          <BrowserRouter>
-            <Routes>
-              {/* Public Routes */}
-              <Route path="/login" element={
-                <PublicRoute>
-                  <AuthPage />
-                </PublicRoute>
-              } />
-              
-              {/* Onboarding */}
-              <Route path="/onboarding" element={
-                <ProtectedRoute>
-                  <Onboarding />
-                </ProtectedRoute>
-              } />
+          <InterestProvider>
+            <BrowserRouter>
+              <Routes>
+                {/* Public Routes */}
+                <Route path="/login" element={
+                  <PublicRoute>
+                    <AuthPage />
+                  </PublicRoute>
+                } />
 
-              {/* Protected App Routes */}
-              <Route path="/" element={
-                <ProtectedRoute>
-                  <ChatLayout />
-                </ProtectedRoute>
-              }>
-                <Route index element={<Home />} />
-                <Route path="assess" element={<AssessMyKnowledge />} />
-                <Route path="roadmaps" element={<Roadmap />} />
-                <Route path="explore" element={<ExploreDomains />} />
-                <Route path="news" element={<NewsTrends />} />
-                <Route path="chat" element={<ChatInterface />} />
-                <Route path="history" element={<Placeholder title="Learning History" />} />
-                <Route path="settings" element={<Placeholder title="Settings" />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Route>
-            </Routes>
-          </BrowserRouter>
+                {/* Onboarding */}
+                <Route path="/onboarding" element={
+                  <ProtectedRoute>
+                    <Onboarding />
+                  </ProtectedRoute>
+                } />
+
+                {/* Protected App Routes */}
+                <Route path="/" element={
+                  <ProtectedRoute>
+                    <ChatLayout />
+                  </ProtectedRoute>
+                }>
+                  <Route index element={<Home />} />
+                  <Route path="new-home" element={<NewHome />} />
+                  <Route path="assess" element={<AssessMyKnowledge />} />
+                  <Route path="roadmaps" element={<Navigate to="/roadmaps/ai-ml" replace />} />
+                  <Route path="roadmaps/ai-ml" element={<AIMLRoadmap />} />
+                  <Route path="explore" element={<ExploreDomains />} />
+                  <Route path="news" element={<NewsTrends />} />
+                  <Route path="chat" element={<ChatInterface />} />
+                  <Route path="history" element={<Placeholder title="Learning History" />} />
+                  <Route path="settings" element={<Placeholder title="Settings" />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </InterestProvider>
         </ChatProvider>
       </AuthProvider>
     </ThemeProvider>
